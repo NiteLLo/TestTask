@@ -1,0 +1,204 @@
+﻿<Window x:Class="TestTask.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:TestTask"
+        mc:Ignorable="d"
+        DataContext="{Binding Path=MainWindowVM, Source={StaticResource VMLocator}}"
+        Title="TestTask" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1.5*" />
+            <ColumnDefinition  Width="5" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5" />
+            <RowDefinition />
+            <RowDefinition Height="5" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6*" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+
+            <Viewbox Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                     >
+                <ListView Name="FunctionRank" >
+
+                    <ListViewItem x:Name="CheckLinear">
+                        <CheckBox Content="Линейная">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="Checked">
+                                    <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
+                                                       CommandParameter="{Binding ElementName=CheckLinear}" />
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
+                        </CheckBox>
+                    </ListViewItem>
+                    <ListViewItem x:Name="CheckQuadratic">
+                        <CheckBox  Content="Квадратичная">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="Checked">
+                                    <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
+                                                       CommandParameter="{Binding ElementName=CheckQuadratic}" />
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
+                        </CheckBox>
+                    </ListViewItem>
+                    <ListViewItem x:Name="CheckCubic">
+                        <CheckBox Content="Кубическая">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="Checked">
+                                    <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
+                                                       CommandParameter="{Binding ElementName=CheckCubic}" />
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
+                        </CheckBox>
+                    </ListViewItem>
+                    <ListViewItem Name="CheckFourthDegree">
+                        <CheckBox Content="4-ой степени">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="Checked">
+                                    <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
+                                                       CommandParameter="{Binding ElementName=CheckFourthDegree}" />
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
+                        </CheckBox>
+                    </ListViewItem>
+                    <ListViewItem x:Name="CheckFifthDegree">
+                        <CheckBox Content="5-ой степени">
+                            <b:Interaction.Triggers>
+                                <b:EventTrigger EventName="Checked">
+                                    <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
+                                                       CommandParameter="{Binding ElementName=CheckFifthDegree}" />
+                                </b:EventTrigger>
+                            </b:Interaction.Triggers>
+                        </CheckBox>
+                    </ListViewItem>
+
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="Loaded">
+                            <b:InvokeCommandAction Command="{Binding LoadListFunctionRank}"
+                                                       CommandParameter="{Binding ElementName=FunctionRank}" />
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                </ListView>
+            </Viewbox>
+
+            <Grid Grid.Row="1" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition x:Name="CaseForCoefficientAWidth" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition x:Name="CaseForCoefficientA" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Viewbox Grid.Row="0" Grid.Column="0">
+                    <Label
+                    Content="Коэффициент a:" />
+                </Viewbox>
+                <Viewbox Grid.Row="1" Grid.Column="0">
+                    <Label
+                    Content="Коэффициент b:" />
+                </Viewbox>
+
+                <Viewbox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left">
+                    <TextBox x:Name="CoefficientA"
+                        Text="{Binding CoefficientA, UpdateSourceTrigger=PropertyChanged}"
+                        FontStyle="Italic" MaxLength="18" MaxLines="1"
+                        AutomationProperties.HelpText="Значение коэффициента &quot;a&quot;"
+                        MinHeight="{Binding ElementName=CaseForCoefficientAHeight, Path=ActualHeight}"
+                        MinWidth="{Binding ElementName=CaseForCoefficientAWidth, Path=ActualWidth}">
+
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="TextChanged">
+                                <b:InvokeCommandAction Command="{Binding ValidOnNumber}"
+                                                       CommandParameter="{Binding ElementName=CoefficientA}" />
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </TextBox>
+                </Viewbox>
+
+                <Viewbox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left">
+                    <TextBox
+                         x:Name="CoefficientB"
+                        Text="{Binding CoefficientB, UpdateSourceTrigger=PropertyChanged}"
+                        FontStyle="Italic" MaxLength="18" MaxLines="1"
+                        AutomationProperties.HelpText="Значение коэффициента &quot;b&quot;"
+                        MinHeight="{Binding ElementName=CaseForCoefficientAHeight, Path=ActualHeight}"
+                        MinWidth="{Binding ElementName=CaseForCoefficientAWidth, Path=ActualWidth}">
+
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="TextChanged">
+                                <b:InvokeCommandAction Command="{Binding ValidOnNumber}"
+                                                       CommandParameter="{Binding ElementName=CoefficientB}" />
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </TextBox>
+                </Viewbox>
+
+
+                <Viewbox Grid.Row="2" Grid.Column="0">
+                    <Label
+                    Content="Коэффициент c:" />
+                </Viewbox>
+                <Viewbox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left">
+                    <ComboBox Name="CoefficientC" ItemsSource="{Binding CoefficientCSelections, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding SelectedCoefficientC, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedIndex="0">
+
+                        <b:Interaction.Triggers>
+                            <b:EventTrigger EventName="Loaded">
+                                <b:InvokeCommandAction Command="{Binding LoadCoefficientCBox}"
+                                                       CommandParameter="{Binding ElementName=CoefficientC}" />
+                            </b:EventTrigger>
+                            <b:EventTrigger EventName="SelectionChanged">
+                                <b:InvokeCommandAction Command="{Binding SelectionChangedCoefficientCBox}"
+                                                       CommandParameter="{Binding ElementName=CoefficientC}" />
+                            </b:EventTrigger>
+                        </b:Interaction.Triggers>
+                    </ComboBox>
+                </Viewbox>
+            </Grid>
+
+
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <DataGrid Name="FunctionTable" Grid.Row="0" Grid.Column="0"
+                  ItemsSource="{Binding TableFunctions, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="True" CanUserDeleteRows="True"
+                  CanUserSortColumns="True" SelectedItem="{Binding SelectedRowFunnction}" SelectionMode="Single"
+                      ColumnWidth="*">
+
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Loaded">
+                        <b:InvokeCommandAction Command="{Binding LoadFunctionTable}"
+                                                       CommandParameter="{Binding ElementName=FunctionTable}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+
+            </DataGrid>
+        </Grid>
+
+    </Grid>
+</Window>
