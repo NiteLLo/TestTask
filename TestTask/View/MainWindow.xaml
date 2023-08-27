@@ -7,111 +7,173 @@
         xmlns:local="clr-namespace:TestTask"
         mc:Ignorable="d"
         DataContext="{Binding Path=MainWindowVM, Source={StaticResource VMLocator}}"
-        Title="TestTask" Height="450" Width="800">
+        Title="TestTask" Height="450" Width="800" MinHeight="325" MinWidth="550" Background="#FF0F0F0F">
+
     <Grid>
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition>
+                <ColumnDefinition.Width>
+                    <MultiBinding Converter="{StaticResource BoolToGridLengthMulti}" Mode="TwoWay">
+                        <Binding ElementName="LinearRadioButton" Path="IsChecked"/>
+                        <Binding ElementName="QuadraticRadioButton" Path="IsChecked"/>
+                        <Binding ElementName="CubicRadioButton" Path="IsChecked"/>
+                        <Binding ElementName="FourthDegreeRadioButton" Path="IsChecked"/>
+                        <Binding ElementName="FifthDegreeRadioButton" Path="IsChecked"/>
+                    </MultiBinding>
+                </ColumnDefinition.Width>
+            </ColumnDefinition>
             <ColumnDefinition Width="1.5*" />
-            <ColumnDefinition  Width="5" />
+            <ColumnDefinition  Width="0.5*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="5" />
-            <RowDefinition />
+            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="auto"/>
+            <RowDefinition>
+                <RowDefinition.Height>
+                    <MultiBinding Converter="{StaticResource BoolToGridLengthMulti}" Mode="TwoWay">
+                        <Binding ElementName="LinearRadioButton" Path="IsChecked"/>
+                        <Binding ElementName="QuadraticRadioButton" Path="IsChecked"/>
+                        <Binding ElementName="CubicRadioButton" Path="IsChecked"/>
+                        <Binding ElementName="FourthDegreeRadioButton" Path="IsChecked"/>
+                        <Binding ElementName="FifthDegreeRadioButton" Path="IsChecked"/>
+                    </MultiBinding>
+                </RowDefinition.Height>
+            </RowDefinition>
             <RowDefinition Height="5" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="6*" />
-                <RowDefinition Height="2*" />
-            </Grid.RowDefinitions>
 
-            <Viewbox Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"
+        <Viewbox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Top"
                      >
-                <ListView Name="FunctionRank" >
-
+            <ListView Name="FunctionRank" Background="{x:Null}" BorderBrush="#FF688CAF" BorderThickness="0">
+                <StackPanel Orientation="Horizontal">
                     <ListViewItem x:Name="CheckLinear">
-                        <CheckBox Content="Линейная">
-                            <b:Interaction.Triggers>
+                        <RadioButton Name="LinearRadioButton" Content="Линейная" Foreground="White" 
+                                     Background="White" GroupName="FunctionType" IsChecked="True">
+                            <!--<b:Interaction.Triggers>
                                 <b:EventTrigger EventName="Checked">
                                     <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
                                                        CommandParameter="{Binding ElementName=CheckLinear}" />
                                 </b:EventTrigger>
-                            </b:Interaction.Triggers>
-                        </CheckBox>
+                            </b:Interaction.Triggers>-->
+                        </RadioButton>
                     </ListViewItem>
                     <ListViewItem x:Name="CheckQuadratic">
-                        <CheckBox  Content="Квадратичная">
-                            <b:Interaction.Triggers>
+                        <RadioButton  Content="Квадратичная" Name="QuadraticRadioButton" Background="White" 
+                                      Foreground="White" GroupName="FunctionType">
+                            <!--<b:Interaction.Triggers>
                                 <b:EventTrigger EventName="Checked">
                                     <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
                                                        CommandParameter="{Binding ElementName=CheckQuadratic}" />
                                 </b:EventTrigger>
-                            </b:Interaction.Triggers>
-                        </CheckBox>
+                            </b:Interaction.Triggers>-->
+                        </RadioButton>
                     </ListViewItem>
                     <ListViewItem x:Name="CheckCubic">
-                        <CheckBox Content="Кубическая">
-                            <b:Interaction.Triggers>
-                                <b:EventTrigger EventName="Checked">
+                        <RadioButton Content="Кубическая" Name="CubicRadioButton" Background="White" 
+                                     Foreground="White" GroupName="FunctionType">
+                            <!--<b:Interaction.Triggers>-->
+                            <!--<b:EventTrigger EventName="Checked">
                                     <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
                                                        CommandParameter="{Binding ElementName=CheckCubic}" />
                                 </b:EventTrigger>
-                            </b:Interaction.Triggers>
-                        </CheckBox>
+                            </b:Interaction.Triggers>-->
+                           
+                        </RadioButton>
                     </ListViewItem>
                     <ListViewItem Name="CheckFourthDegree">
-                        <CheckBox Content="4-ой степени">
-                            <b:Interaction.Triggers>
+                        <RadioButton Content="4-ой степени" Name="FourthDegreeRadioButton" Background="White" 
+                                  Foreground="White" GroupName="FunctionType">
+                            <!--<b:Interaction.Triggers>
                                 <b:EventTrigger EventName="Checked">
                                     <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
                                                        CommandParameter="{Binding ElementName=CheckFourthDegree}" />
                                 </b:EventTrigger>
-                            </b:Interaction.Triggers>
-                        </CheckBox>
+                            </b:Interaction.Triggers>-->
+                        </RadioButton>
                     </ListViewItem>
                     <ListViewItem x:Name="CheckFifthDegree">
-                        <CheckBox Content="5-ой степени">
-                            <b:Interaction.Triggers>
+                        <RadioButton Content="5-ой степени" Name="FifthDegreeRadioButton" Background="White" 
+                                     Foreground="White" GroupName="FunctionType">
+                            <!--<b:Interaction.Triggers>
                                 <b:EventTrigger EventName="Checked">
                                     <b:InvokeCommandAction Command="{Binding CheckedFunctionRank}"
                                                        CommandParameter="{Binding ElementName=CheckFifthDegree}" />
                                 </b:EventTrigger>
-                            </b:Interaction.Triggers>
-                        </CheckBox>
+                            </b:Interaction.Triggers>-->
+                        </RadioButton>
                     </ListViewItem>
+                </StackPanel>
 
-                    <b:Interaction.Triggers>
-                        <b:EventTrigger EventName="Loaded">
-                            <b:InvokeCommandAction Command="{Binding LoadListFunctionRank}"
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Loaded">
+                        <b:InvokeCommandAction Command="{Binding LoadListFunctionRank}"
                                                        CommandParameter="{Binding ElementName=FunctionRank}" />
-                        </b:EventTrigger>
-                    </b:Interaction.Triggers>
-                </ListView>
-            </Viewbox>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </ListView>
+        </Viewbox>
 
-            <Grid Grid.Row="1" Grid.Column="0">
+        <DataGrid Name="FunctionTable" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" BorderThickness="0"
+                  ItemsSource="{Binding TableFunctions, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="True" CanUserDeleteRows="True"
+                  CanUserSortColumns="True" SelectedItem="{Binding SelectedRowFunnction}" SelectionMode="Single"
+                      ColumnWidth="*" Background="{x:Null}" Foreground="White">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Style.Triggers>
+                        <Trigger Property="DataGridCell.IsSelected" Value="True">
+                            <Setter Property="Background" Value="#3f3f3f" />
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                        <Trigger Property="DataGridCell.IsSelected" Value="False">
+                            <Setter Property="Background" Value="#FF2A2A2A" />
+                            <Setter Property="BorderBrush" Value="#3f3f3f"/>
+                            <Setter Property="Foreground" Value="#FFE6E6E6"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+                <!--<Style TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="#FF2A2A2A" />
+                    <Setter Property="Foreground" Value="White"/>
+                </Style>-->
+            </DataGrid.Resources>
+            
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="Loaded">
+                    <b:InvokeCommandAction Command="{Binding LoadFunctionTable}"
+                                                       CommandParameter="{Binding ElementName=FunctionTable}" />
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+
+        </DataGrid>
+
+        <Grid Grid.Row="2" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Grid.Column="0" Background="#FF2A2A2A">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition x:Name="CaseForCoefficientAWidth" />
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition x:Name="CaseForCoefficientAWidth" Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition x:Name="CaseForCoefficientA" />
-                    <RowDefinition />
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition x:Name="CaseForCoefficientA" Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
                 <Viewbox Grid.Row="0" Grid.Column="0">
                     <Label
-                    Content="Коэффициент a:" />
+                    Content="Коэффициент a:" Foreground="White" />
                 </Viewbox>
                 <Viewbox Grid.Row="1" Grid.Column="0">
                     <Label
-                    Content="Коэффициент b:" />
+                    Content="Коэффициент b:" Foreground="White" />
                 </Viewbox>
 
                 <Viewbox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left">
@@ -120,7 +182,7 @@
                         FontStyle="Italic" MaxLength="18" MaxLines="1"
                         AutomationProperties.HelpText="Значение коэффициента &quot;a&quot;"
                         MinHeight="{Binding ElementName=CaseForCoefficientAHeight, Path=ActualHeight}"
-                        MinWidth="{Binding ElementName=CaseForCoefficientAWidth, Path=ActualWidth}">
+                        MinWidth="{Binding ElementName=CaseForCoefficientAWidth, Path=ActualWidth}" Background="{x:Null}" Foreground="White" BorderBrush="#FF688CAF">
 
                         <b:Interaction.Triggers>
                             <b:EventTrigger EventName="TextChanged">
@@ -138,7 +200,7 @@
                         FontStyle="Italic" MaxLength="18" MaxLines="1"
                         AutomationProperties.HelpText="Значение коэффициента &quot;b&quot;"
                         MinHeight="{Binding ElementName=CaseForCoefficientAHeight, Path=ActualHeight}"
-                        MinWidth="{Binding ElementName=CaseForCoefficientAWidth, Path=ActualWidth}">
+                        MinWidth="{Binding ElementName=CaseForCoefficientAWidth, Path=ActualWidth}" Background="{x:Null}" Foreground="White" BorderBrush="#FF688CAF">
 
                         <b:Interaction.Triggers>
                             <b:EventTrigger EventName="TextChanged">
@@ -152,12 +214,12 @@
 
                 <Viewbox Grid.Row="2" Grid.Column="0">
                     <Label
-                    Content="Коэффициент c:" />
+                    Content="Коэффициент c:" Foreground="White" />
                 </Viewbox>
                 <Viewbox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left">
                     <ComboBox Name="CoefficientC" ItemsSource="{Binding CoefficientCSelections, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding SelectedCoefficientC, UpdateSourceTrigger=PropertyChanged}"
-                              SelectedIndex="0">
+                              SelectedIndex="0" Background="{x:Null}" Foreground="Black" BorderBrush="#FF688CAF" BorderThickness="1">
 
                         <b:Interaction.Triggers>
                             <b:EventTrigger EventName="Loaded">
@@ -173,8 +235,8 @@
                 </Viewbox>
             </Grid>
 
-
         </Grid>
+
 
         <Grid Grid.Row="1" Grid.Column="2">
 
@@ -185,20 +247,8 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <DataGrid Name="FunctionTable" Grid.Row="0" Grid.Column="0"
-                  ItemsSource="{Binding TableFunctions, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="True" CanUserDeleteRows="True"
-                  CanUserSortColumns="True" SelectedItem="{Binding SelectedRowFunnction}" SelectionMode="Single"
-                      ColumnWidth="*">
-
-                <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="Loaded">
-                        <b:InvokeCommandAction Command="{Binding LoadFunctionTable}"
-                                                       CommandParameter="{Binding ElementName=FunctionTable}" />
-                    </b:EventTrigger>
-                </b:Interaction.Triggers>
-
-            </DataGrid>
         </Grid>
 
     </Grid>
+
 </Window>

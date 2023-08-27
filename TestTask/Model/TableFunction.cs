@@ -13,19 +13,8 @@ namespace TestTask.Model
     /// <summary>
     /// Класс-Модель данных для таблицы данных
     /// </summary>
-    public class TableFunction : INotifyPropertyChanged
+    public class TableFunction
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Реализация интерфейса INotifyPropertyChanged даёт возможность сообщать об изменениях в свойствах
-        /// </summary>
-        /// <param name="propertyName">Имя свойства</param>
-        protected virtual void NotifyPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         /// <summary>
         /// Пустой конструктор для тестов
         /// </summary>
@@ -67,8 +56,6 @@ namespace TestTask.Model
                 x = output == "" ? "0" : output;
 
                 CalculateMainFunc();
-                NotifyPropertyChanged(nameof(X));
-                NotifyPropertyChanged(nameof(F));
             }
         }
 
@@ -85,8 +72,6 @@ namespace TestTask.Model
                 y = output == "" ? "0" : output;
 
                 CalculateMainFunc();
-                NotifyPropertyChanged(nameof(Y));
-                NotifyPropertyChanged(nameof(F));
             }
         }
 
