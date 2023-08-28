@@ -11,7 +11,6 @@
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="bool2VisibilityConverter" />
             <mConverter:BooleanToGridLengthMultiConverter x:Key="BoolToGridLengthMulti"/>
-            <mConverter:BooleanArrayToBooleanMultiConverter x:Key="BoolArrayToBoolMulti"/>
             <vm:VMLocator x:Key="VMLocator"/>
 
 

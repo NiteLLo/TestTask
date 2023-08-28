@@ -86,6 +86,23 @@ namespace TestTask.Model
         private int c;
         private FunctionRankName rank;
 
+        public int GetCoefficientA()
+        {
+            return a;
+        }
+        public int GetCoefficientB()
+        {
+            return b;
+        }
+        public int GetCoefficientC()
+        {
+            return c;
+        }
+        public FunctionRankName GetRank()
+        {
+            return rank;
+        }
+
         /// <summary>
         /// Метод для изменения коэффициента a
         /// </summary>
@@ -93,6 +110,7 @@ namespace TestTask.Model
         public void EditCoefficientA(int a)
         {
             this.a = a;
+            CalculateMainFunc();
         }
         /// <summary>
         /// Метод для изменения коэффициента b
@@ -101,6 +119,7 @@ namespace TestTask.Model
         public void EditCoefficientB(int b)
         {
             this.b = b;
+            CalculateMainFunc();
         }
         /// <summary>
         /// Метод для изменения коэффициента c
@@ -109,6 +128,7 @@ namespace TestTask.Model
         public void EditCoefficientC(int c)
         {
             this.c = c;
+            CalculateMainFunc();
         }
         /// <summary>
         /// Метод для изменения степени функции
@@ -117,6 +137,7 @@ namespace TestTask.Model
         public void EditFunctionRank(FunctionRankName rank)
         {
             this.rank = rank;
+            CalculateMainFunc();
         }
         /// <summary>
         /// Метод выбора расчётов

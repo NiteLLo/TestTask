@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using TestTask.ViewModel;
 using TestTask.Model;
 using TestTask.Model.Enum;
+using System.Windows.Data;
 
 namespace TestTask.ViewModel
 {
@@ -18,7 +19,16 @@ namespace TestTask.ViewModel
     /// </summary>
     internal class MainWindowVM : BaseVM
     {
+
         #region COLLECTIONS
+
+        private CollectionViewSource viewSource = new CollectionViewSource();
+        public CollectionViewSource ViewSource 
+        {
+            get { viewSource.Source = TableFunctions; return viewSource;  }
+            set { viewSource = value; NotifyPropertyChanged(nameof(ViewSource)); } 
+        }
+
         /// <summary>
         /// Два списка для сохранения значений соэффициентов при переходе по степенным функциям
         /// </summary>
@@ -33,10 +43,10 @@ namespace TestTask.ViewModel
             get { return coefficientCSelections; }
             set
             {
-                coefficientCSelections = from x in baseCoefficientC
-                                         select x * value.First(); NotifyPropertyChanged(nameof(CoefficientCSelections));
+                coefficientCSelections = value; NotifyPropertyChanged(nameof(CoefficientCSelections));
 
-                CoefficientCBox.SelectedIndex = Convert.ToInt32(SelectedCoefficientC.ToString()[0].ToString()) - 1;
+                SelectedCoefficientC = SelectedCoefficientC == null ? (int)Math.Pow(10, (int)SelectedRank) :
+                    (Convert.ToInt32(SelectedCoefficientC.ToString()[0].ToString()) - 1) * (int)Math.Pow(10, (int)SelectedRank);
 
             }
         }
@@ -50,9 +60,9 @@ namespace TestTask.ViewModel
         /// <summary>
         /// Коллекция табличных значений со всеми коэффициентами и переменными
         /// </summary>
-        private IEnumerable<TableFunction> tableFunctions = new ObservableCollection<TableFunction>()
-        { new TableFunction("0", "0", 0, 0, 0, FunctionRankName.Linear) };
-        public IEnumerable<TableFunction> TableFunctions
+        private ObservableCollection<TableFunction> tableFunctions = new ObservableCollection<TableFunction>()
+        { new TableFunction("0", "0", 0, 0, 1, FunctionRankName.Linear) };
+        public ObservableCollection<TableFunction> TableFunctions
         {
             get { return tableFunctions; }
             set
@@ -77,8 +87,11 @@ namespace TestTask.ViewModel
             set
             {
                 coefficientA = value; NotifyPropertyChanged(nameof(CoefficientA));
-                coefficientAList[CoefficientCBox.SelectedValue.ToString().Length - 1] = CoefficientA;
-                CalculateRow();
+
+                if (SelectedTableItem is not null)
+                    TableFunctions.First(x => x == SelectedTableItem).EditCoefficientA(Convert.ToInt32(value));
+
+                RefreshTable();
             }
         }
 
@@ -93,72 +106,51 @@ namespace TestTask.ViewModel
             set
             {
                 coefficientB = value; NotifyPropertyChanged(nameof(CoefficientB));
-                coefficientBList[CoefficientCBox.SelectedValue.ToString().Length - 1] = CoefficientB;
-                CalculateRow();
+
+                if (SelectedTableItem is not null)
+                    TableFunctions.FirstOrDefault(x => x == SelectedTableItem).EditCoefficientB(Convert.ToInt32(value));
+
+                RefreshTable();
             }
         }
 
-        private int selectedCoefficientC;
+        private object? selectedCoefficientC;
         /// <summary>
         /// Свойство для хранения выбранного коэффициента "c"
         /// Содержит дополнительно передачу коэффциента "c" выбранному элементу таблицы и вызов расчётного метода
         /// </summary>
-        public int SelectedCoefficientC
+        public object? SelectedCoefficientC
         {
             get { return selectedCoefficientC; }
             set
             {
                 selectedCoefficientC = value; NotifyPropertyChanged(nameof(SelectedCoefficientC));
-                SelectedRowFunnction.EditCoefficientC(SelectedCoefficientC);
-                if (FunctionTable != null)
-                    CalculateRow();
+                
+                    if (SelectedTableItem is not null)
+                        TableFunctions.FirstOrDefault(x => x == SelectedTableItem).EditCoefficientC(Convert.ToInt32(value));
+                    RefreshTable();
+            }
+        }
+
+        /// <summary>
+        /// Свойство для хранения выбранной степенной функции
+        /// </summary>
+        private FunctionRankName selectedRank = FunctionRankName.Linear;
+        public FunctionRankName SelectedRank
+        {
+            get { return selectedRank; }
+            set 
+            { 
+                selectedRank = value; 
+                NotifyPropertyChanged(nameof(SelectedRank));
+
+                CoefficientCSelections = from x in baseCoefficientC
+                                         select x * (int)Math.Pow(10, (int)SelectedRank);
             }
         }
 
         #endregion
-
-        #region UI_ELEMENTS
-        /// <summary>
-        /// Свойство для хранения UI элемента выпадающего списка 
-        /// </summary>
-        private ComboBox coefficientCBox;
-        public ComboBox CoefficientCBox
-        {
-            get { return coefficientCBox; }
-            set { coefficientCBox = value; NotifyPropertyChanged(nameof(CoefficientCBox)); }
-        }
-
-        /// <summary>
-        /// Свойство для хранения UI элемента последнего активированного флажка
-        /// </summary>
-        private CheckBox lastCheckBox = new CheckBox() { IsChecked = false };
-        public CheckBox LastCheckBox
-        {
-            get { return lastCheckBox; }
-            set { lastCheckBox = value; NotifyPropertyChanged(nameof(LastCheckBox)); }
-        }
-
-        /// <summary>
-        /// Свойство для хранения Ui элемента списка степенных функций
-        /// </summary>
-        private ListView functionRank;
-        public ListView FunctionRank
-        {
-            get { return functionRank; }
-            set { functionRank = value; NotifyPropertyChanged(nameof(FunctionRank)); }
-        }
-
-        /// <summary>
-        /// Свойство для хранения UI элемента
-        /// </summary>
-        private DataGrid functionTable;
-        public DataGrid FunctionTable
-        {
-            get { return functionTable; }
-            set { functionTable = value; NotifyPropertyChanged(nameof(FunctionTable)); }
-        }
-        #endregion
-
+     
         #region COMMANDS
         /// <summary>
         /// Команда перехватывающая событие на изменение TextBox для валидации данных
@@ -177,27 +169,10 @@ namespace TestTask.ViewModel
                     tb.Text = output == "" ? "0" : output;
                     tb.CaretIndex = tb.Text.Length;
 
-                    SelectedRowFunnction.EditCoefficientA(Convert.ToInt32(CoefficientA));
-                    SelectedRowFunnction.EditCoefficientB(Convert.ToInt32(CoefficientB));
-                    CalculateRow();
+                    RefreshTable();
                 });
             }
-        }
-
-        /// <summary>
-        /// Команда для передачи ссылки на UI элемент
-        /// </summary>
-        private RelayCommand loadCoefficientCBox;
-        public RelayCommand LoadCoefficientCBox
-        {
-            get
-            {
-                return loadCoefficientCBox ?? new RelayCommand(obj =>
-                {
-                    CoefficientCBox = obj as ComboBox;
-                });
-            }
-        }
+        } 
         /// <summary>
         /// Команда для запуска расчётного метода при изменении выбранного коэффициента "c"
         /// </summary>
@@ -208,7 +183,7 @@ namespace TestTask.ViewModel
             {
                 return selectionChangedCoefficientCBox ?? new RelayCommand(obj =>
                 {
-                    CalculateRow();
+                    RefreshTable();
                 });
             }
         }
@@ -225,78 +200,144 @@ namespace TestTask.ViewModel
             {
                 return checkedFunctionRank ?? new RelayCommand(obj =>
                 {
-                    if (lastCheckBox == null)
+                    try
                     {
-                        var view = obj as ListViewItem;
-                        lastCheckBox = (CheckBox?)(obj as ListViewItem).Content;
-
-                        CoefficientCSelections = new ObservableCollection<int> { Convert.ToInt32(Math.Pow(10, FunctionRank.Items.IndexOf(obj as ListViewItem))) };
+                        if (obj is not null)
+                        {
+                            SelectedRank = (FunctionRankName)Convert.ToInt32(obj as string);
+                        }
                     }
-                    else if (lastCheckBox != (CheckBox?)(obj as ListViewItem).Content)
+                    catch (InvalidCastException ex)
                     {
-                        lastCheckBox.IsChecked = false;
-                        lastCheckBox = (CheckBox?)(obj as ListViewItem).Content;
+                        throw new InvalidCastException(ex.Message);
+                    }
+                    finally 
+                    {
 
-                        CoefficientCSelections = new ObservableCollection<int> { Convert.ToInt32(Math.Pow(10, FunctionRank.Items.IndexOf(obj as ListViewItem))) };
+                        if (SelectedTableItem is not null)
+                            TableFunctions.FirstOrDefault(x => x == SelectedTableItem).EditFunctionRank(SelectedRank);
+
+                        RefreshTable();
                     }
 
-                    SelectedRowFunnction.EditFunctionRank((FunctionRankName)FunctionRank.Items.IndexOf(obj as ListViewItem));
-                    CoefficientA = coefficientAList[FunctionRank.Items.IndexOf(obj as ListViewItem)];
-                    CoefficientB = coefficientBList[FunctionRank.Items.IndexOf(obj as ListViewItem)];
 
-                    CalculateRow();
+                   
                 });
             }
-        }
-
-        /// <summary>
-        /// Команда для загрузки UI элемента
-        /// </summary>
-        private RelayCommand loadListFunctionRank;
-        public RelayCommand LoadListFunctionRank
-        {
-            get
-            {
-                return loadListFunctionRank ?? new RelayCommand(obj =>
-                {
-                    functionRank = obj as ListView;
-                });
-            }
-        }
-
-        /// <summary>
-        /// Команда для передачи UI элемента
-        /// </summary>
-        private RelayCommand loadFunctionTable;
-        public RelayCommand LoadFunctionTable
-        {
-            get
-            {
-                return loadFunctionTable ?? new RelayCommand(obj =>
-                {
-                    FunctionTable = obj as DataGrid;
-                });
-            }
-        }
+        }    
         #endregion
 
         #region METHODS
         /// <summary>
         /// Метод расчёта и обновления функции в таблице
         /// </summary>
-        private void CalculateRow()
+        private void RefreshTable()
         {
-            SelectedRowFunnction.CalculateMainFunc();
-            FunctionTable.Items.Refresh();
+            ViewSource.View.Refresh();
+        }
+
+        private void SwitchRank(FunctionRankName tbFunc)
+        {
+            switch (tbFunc) 
+            {
+                case FunctionRankName.Linear:
+                    LinearIsChecked = true;
+                    break;
+                case FunctionRankName.Quadratic:
+                    QuadraticIsChecked = true;
+                    break;
+                case FunctionRankName.Cubic:
+                    CubicIsChecked = true;
+                    break;
+                case FunctionRankName.FourthDegree:
+                    FourthDegreeIsChecked = true;
+                    break;
+                case FunctionRankName.FifthDegree:
+                    FifthDegreeIsChecked = true;
+                    break;
+            }
         }
         #endregion
 
-        /// <summary>
-        /// Свойство для хранения выбранного элемента таблицы
-        /// </summary>
-        public TableFunction SelectedRowFunnction { get; set; } = new TableFunction("0", "0", 0, 0, 0, FunctionRankName.Linear);
-        
-        
-        
+        private TableFunction selectedTableItem;
+        public TableFunction SelectedTableItem
+        {
+            get { return  selectedTableItem; }
+            set 
+            {
+                selectedTableItem = value; NotifyPropertyChanged(nameof(SelectedTableItem));
+
+                if (SelectedTableItem is not null)
+                {
+                    coefficientA = SelectedTableItem.GetCoefficientA().ToString();
+                    NotifyPropertyChanged(nameof(CoefficientA));
+
+                    coefficientB = SelectedTableItem.GetCoefficientB().ToString();
+                    NotifyPropertyChanged(nameof(CoefficientB));
+
+                    selectedCoefficientC = SelectedTableItem.GetCoefficientC();
+                    NotifyPropertyChanged(nameof(SelectedCoefficientC));
+
+                    selectedRank = SelectedTableItem.GetRank();
+                    SwitchRank(selectedRank);
+                    NotifyPropertyChanged(nameof(SelectedRank));
+
+                    RefreshTable();
+                }
+                
+            }
+        }
+        private bool linearIsChecked = true;
+        public bool LinearIsChecked
+        {
+            get { return linearIsChecked; }
+            set
+            {
+                linearIsChecked = value; NotifyPropertyChanged(nameof(LinearIsChecked));
+                NotifyPropertyChanged(nameof(SelectedCoefficientC));
+            }
+        }
+
+        private bool quadraticIsChecked;
+        public bool QuadraticIsChecked
+        {
+            get { return quadraticIsChecked; }
+            set
+            {
+                quadraticIsChecked = value; NotifyPropertyChanged(nameof(QuadraticIsChecked));
+                NotifyPropertyChanged(nameof(SelectedCoefficientC));
+            }
+        }
+
+        private bool cubicIsChecked;
+        public bool CubicIsChecked
+        {
+            get { return cubicIsChecked; }
+            set
+            {
+                cubicIsChecked = value; NotifyPropertyChanged(nameof(CubicIsChecked));
+                NotifyPropertyChanged(nameof(SelectedCoefficientC));
+            }
+        }
+
+        private bool fourthDegreeIsChecked;
+        public bool FourthDegreeIsChecked
+        {
+            get { return fourthDegreeIsChecked; }
+            set
+            {
+                fourthDegreeIsChecked = value; NotifyPropertyChanged(nameof(FourthDegreeIsChecked));
+            }
+        }
+
+        private bool fifthDegreeIsChecked;
+        public bool FifthDegreeIsChecked
+        {
+            get { return fifthDegreeIsChecked; }
+            set
+            {
+                fifthDegreeIsChecked = value; NotifyPropertyChanged(nameof(FifthDegreeIsChecked));
+            }
+        }
     }
 }
