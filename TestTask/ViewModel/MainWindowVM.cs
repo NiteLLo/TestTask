@@ -22,6 +22,9 @@ namespace TestTask.ViewModel
 
         #region COLLECTIONS
 
+        /// <summary>
+        /// Дополнительный1 слой между таблицей и коллекцией для доступа к необходимым функциям без загрузки UI элемента
+        /// </summary>
         private CollectionViewSource viewSource = new CollectionViewSource();
         public CollectionViewSource ViewSource 
         {
@@ -235,7 +238,10 @@ namespace TestTask.ViewModel
         {
             ViewSource.View.Refresh();
         }
-
+        /// <summary>
+        /// Метод для измения выбранной степени функции
+        /// </summary>
+        /// <param name="tbFunc">Новая степеноь функции</param>
         private void SwitchRank(FunctionRankName tbFunc)
         {
             switch (tbFunc) 
@@ -258,7 +264,9 @@ namespace TestTask.ViewModel
             }
         }
         #endregion
-
+        /// <summary>
+        /// Свойство для обработки выбираемого элемента таблицы
+        /// </summary>
         private TableFunction selectedTableItem;
         public TableFunction SelectedTableItem
         {
@@ -287,6 +295,9 @@ namespace TestTask.ViewModel
                 
             }
         }
+        /// <summary>
+        /// Свойство для хранения значения выбора линейной функции
+        /// </summary>
         private bool linearIsChecked = true;
         public bool LinearIsChecked
         {
@@ -297,7 +308,9 @@ namespace TestTask.ViewModel
                 NotifyPropertyChanged(nameof(SelectedCoefficientC));
             }
         }
-
+        /// <summary>
+        /// Свойство для хранения значения выбора квадратичной функции
+        /// </summary>
         private bool quadraticIsChecked;
         public bool QuadraticIsChecked
         {
@@ -308,7 +321,9 @@ namespace TestTask.ViewModel
                 NotifyPropertyChanged(nameof(SelectedCoefficientC));
             }
         }
-
+        /// <summary>
+        /// Свойство для хранения значения выбора кубической функции
+        /// </summary>
         private bool cubicIsChecked;
         public bool CubicIsChecked
         {
@@ -319,7 +334,9 @@ namespace TestTask.ViewModel
                 NotifyPropertyChanged(nameof(SelectedCoefficientC));
             }
         }
-
+        /// <summary>
+        /// Свойство для хранения значения выбора функции 4-ой степени
+        /// </summary>
         private bool fourthDegreeIsChecked;
         public bool FourthDegreeIsChecked
         {
@@ -329,7 +346,9 @@ namespace TestTask.ViewModel
                 fourthDegreeIsChecked = value; NotifyPropertyChanged(nameof(FourthDegreeIsChecked));
             }
         }
-
+        /// <summary>
+        /// Свойство для хранения значения выбора функции 5-ой степени
+        /// </summary>
         private bool fifthDegreeIsChecked;
         public bool FifthDegreeIsChecked
         {
