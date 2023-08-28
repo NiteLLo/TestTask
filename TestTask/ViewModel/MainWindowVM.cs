@@ -11,6 +11,7 @@ using TestTask.ViewModel;
 using TestTask.Model;
 using TestTask.Model.Enum;
 using System.Windows.Data;
+using Caliburn.Micro;
 
 namespace TestTask.ViewModel
 {
@@ -28,15 +29,9 @@ namespace TestTask.ViewModel
         private CollectionViewSource viewSource = new CollectionViewSource();
         public CollectionViewSource ViewSource 
         {
-            get { viewSource.Source = TableFunctions; return viewSource;  }
+            get { viewSource.Source = TableFunctions; return viewSource; }
             set { viewSource = value; NotifyPropertyChanged(nameof(ViewSource)); } 
         }
-
-        /// <summary>
-        /// Два списка для сохранения значений соэффициентов при переходе по степенным функциям
-        /// </summary>
-        private string[] coefficientAList = new string[5];
-        private string[] coefficientBList = new string[5];
 
         /// <summary>
         /// Свойство для хранения и перезаполнения списка коэффициентов "c"
@@ -63,9 +58,9 @@ namespace TestTask.ViewModel
         /// <summary>
         /// Коллекция табличных значений со всеми коэффициентами и переменными
         /// </summary>
-        private ObservableCollection<TableFunction> tableFunctions = new ObservableCollection<TableFunction>()
+        private IEnumerable<TableFunction> tableFunctions = new BindableCollection<TableFunction>()
         { new TableFunction("0", "0", 0, 0, 1, FunctionRankName.Linear) };
-        public ObservableCollection<TableFunction> TableFunctions
+        public IEnumerable<TableFunction> TableFunctions
         {
             get { return tableFunctions; }
             set
